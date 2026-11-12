@@ -1,0 +1,28 @@
+digraph G {
+ graph [rankdir=TB,bgcolor="white",nodesep=0.3,ranksep=0.6];
+ node [shape=plain,fontname="DejaVu Sans",fontsize=13,color="#19354c",style=filled,fillcolor="#f1f7f6",margin=0.12];
+ edge [fontname="DejaVu Sans",fontsize=9,color="#466078"];
+ ui [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">DashboardPanel</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ onChanged()<BR ALIGN="LEFT"/>+ editDialog()</TD></TR></TABLE>>];
+ f [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">MoneyPilotFacade</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ execute(command)<BR ALIGN="LEFT"/>+ undo()<BR ALIGN="LEFT"/>+ settings()<BR ALIGN="LEFT"/>+ summary()</TD></TR></TABLE>>];
+ h [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">CommandHistory</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">history: Deque<BR ALIGN="LEFT"/>+ prepare()<BR ALIGN="LEFT"/>+ remember()<BR ALIGN="LEFT"/>+ peek() / pop()</TD></TR></TABLE>>];
+ c [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">«interface» TransactionCommand</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ apply(list)<BR ALIGN="LEFT"/>+ label()</TD></TR></TABLE>>];
+ concrete [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">Add / Edit / Delete / ImportBatch</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ apply(list)</TD></TR></TABLE>>];
+ repo [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">«interface» Repository</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ load(): State<BR ALIGN="LEFT"/>+ save(State)</TD></TR></TABLE>>];
+ file [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">FileRepository</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">file: Path<BR ALIGN="LEFT"/>+ load()<BR ALIGN="LEFT"/>+ save(State)</TD></TR></TABLE>>];
+ strategy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">«interface» BudgetStrategy</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ warningLimit(budget)<BR ALIGN="LEFT"/>+ name()</TD></TR></TABLE>>];
+ alg [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">Balanced / Cautious</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">100% / 80%</TD></TR></TABLE>>];
+ alert [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">BudgetAlert</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ onChanged()</TD></TR></TABLE>>];
+ {rank=same; h;c;concrete;}
+{rank=same;repo;file;}
+{rank=same;alert;strategy;alg;}
+h -> repo [style=invis];repo -> alert [style=invis];
+ui -> f [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">uses</TD></TR></TABLE>>];
+ f -> h [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">coordinates</TD></TR></TABLE>>];
+ f -> c [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">executes</TD></TR></TABLE>>];
+ concrete -> c [arrowhead=empty,style=dashed,label="implements",constraint=false];
+ f -> repo [label="saves through",constraint=false];
+ file -> repo [arrowhead=empty,style=dashed,constraint=false];
+ f -> strategy [label="stores",constraint=false];
+ alg -> strategy [arrowhead=empty,style=dashed,constraint=false];
+ alert -> strategy [label="uses via facade",constraint=false];
+}

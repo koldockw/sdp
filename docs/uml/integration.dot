@@ -1,0 +1,26 @@
+digraph G {
+ graph [rankdir=TB,bgcolor="white",nodesep=0.3,ranksep=0.6];
+ node [shape=plain,fontname="DejaVu Sans",fontsize=13,color="#19354c",style=filled,fillcolor="#f1f7f6",margin=0.12];
+ edge [fontname="DejaVu Sans",fontsize=9,color="#466078"];
+ f [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">MoneyPilotFacade</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ importFile(path, importer)<BR ALIGN="LEFT"/>+ execute(command)</TD></TR></TABLE>>];
+ bus [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">EventBus</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">listeners: List<BR ALIGN="LEFT"/>+ subscribe()<BR ALIGN="LEFT"/>+ publish()</TD></TR></TABLE>>];
+ listener [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">«interface» FinanceListener</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ onChanged()</TD></TR></TABLE>>];
+ observers [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">BudgetAlert / DashboardPanel</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ onChanged()</TD></TR></TABLE>>];
+ target [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">«interface» TransactionImporter</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ read(path): List</TD></TR></TABLE>>];
+ adapter [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">LegacyBankAdapter</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">legacy: LegacyBankCsv<BR ALIGN="LEFT"/>+ read(path)</TD></TR></TABLE>>];
+ legacy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">LegacyBankCsv</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ loadRows(path): List of Row</TD></TR></TABLE>>];
+ builder [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">Transaction.Builder</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ date() / type()<BR ALIGN="LEFT"/>+ amount() / category() / note()<BR ALIGN="LEFT"/>+ build(): Transaction</TD></TR></TABLE>>];
+ tx [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">Transaction</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">id, date, type, category<BR ALIGN="LEFT"/>amount, note</TD></TR></TABLE>>];
+ {rank=same;bus;target;}
+{rank=same;listener;adapter;}
+{rank=same;observers;legacy;builder;}
+target -> adapter [style=invis];listener -> observers [style=invis];
+f -> bus [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">publishes after save</TD></TR></TABLE>>];
+ bus -> listener [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">notifies</TD></TR></TABLE>>];
+ observers -> listener [arrowhead=empty,style=dashed,label="implements",constraint=false];
+ f -> target [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">uses</TD></TR></TABLE>>];
+ adapter -> target [arrowhead=empty,style=dashed,label="implements",constraint=false];
+ adapter -> legacy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">wraps</TD></TR></TABLE>>];
+ adapter -> builder [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">builds with</TD></TR></TABLE>>];
+ builder -> tx [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#f1f7f6"><TR><TD ALIGN="LEFT" BALIGN="LEFT">creates</TD></TR></TABLE>>];
+}
