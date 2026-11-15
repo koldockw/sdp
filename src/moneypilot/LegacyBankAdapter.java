@@ -16,7 +16,7 @@ public final class LegacyBankAdapter implements TransactionImporter {
                 result.add(new Transaction.Builder().date(LocalDate.parse(row.date()))
                     .type(signed.signum()<0?Transaction.Type.EXPENSE:Transaction.Type.INCOME)
                     .amount(signed.abs()).category(row.category()).note(row.description()).build());
-            } catch(RuntimeException e) { throw new IOException("Invalid CSV record: "+e.getMessage(),e); }
+            } catch(RuntimeException e) { throw new IOException("CSV line "+row.lineNumber()+": "+e.getMessage(),e); }
         }
         return List.copyOf(result);
     }
