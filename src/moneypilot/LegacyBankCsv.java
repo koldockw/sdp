@@ -5,6 +5,7 @@ import java.util.*;
 public final class LegacyBankCsv {
     public record Row(String date,String signedAmount,String category,String description) {}
     // У старого формата другие поля и сумма со знаком.
+    
     public List<Row> loadRows(Path path) throws IOException {
         List<String> lines=Files.readAllLines(path);
         if(lines.isEmpty() || !lines.get(0).replace("\uFEFF", "").equals("date;amount;category;note"))
