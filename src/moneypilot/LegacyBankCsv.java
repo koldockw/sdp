@@ -3,7 +3,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 public final class LegacyBankCsv {
-    public record Row(String date,String signedAmount,String category,String description) {}
+    public record Row(int lineNumber,String date,String signedAmount,String category,String description) {}
     // У старого формата другие поля и сумма со знаком.
     public List<Row> loadRows(Path path) throws IOException {
         List<String> lines=Files.readAllLines(path);
@@ -12,9 +12,11 @@ public final class LegacyBankCsv {
         List<Row> rows=new ArrayList<>();
         for(int i=1;i<lines.size();i++) {
             if(lines.get(i).isBlank()) continue;
-            List<String> fields=Csv.split(lines.get(i));
+            List<String> fields;
+            try { fields=Csv.split(lines.get(i)); }
+            catch(IOException e) { throw new IOException("CSV line "+(i+1)+": "+e.getMessage(),e); }
             if(fields.size()!=4) throw new IOException("CSV line "+(i+1)+": expected four columns");
-            rows.add(new Row(fields.get(0),fields.get(1),fields.get(2),fields.get(3)));
+            rows.add(new Row(i+1,fields.get(0),fields.get(1),fields.get(2),fields.get(3)));
         }
         return rows;
     }
